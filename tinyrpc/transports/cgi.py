@@ -13,6 +13,7 @@ This code is made available under the same license as tinyrpc itself.
 
 from __future__ import print_function
 
+import os
 import sys
 import json
 try:
@@ -39,9 +40,10 @@ class CGIServerTransport(ServerTransport):
         import cgitb
         cgitb.enable()
 
-        request_json = sys.stdin.read()
-        if request_json:
+        if 'CONTENT_LENGTH' in os.environ:
             # POST
+            content_length = int(os.environ['CONTENT_LENGTH'])
+            request_json = sys.stdin.read(content_length)
             request_json = urlparse.unquote(request_json)
         else:
             # GET
